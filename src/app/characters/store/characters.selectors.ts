@@ -1,0 +1,42 @@
+import { createSelector } from '@ngrx/store';
+import { charactersFeature } from './index';
+import { SortSelection } from '../components/sort-selection/SortSelection';
+import { Character } from '../model/Character';
+
+export const characters = createSelector(charactersFeature, state => state.characters);
+export const primarySort = createSelector(charactersFeature, state => state.sort.selections[0] || undefined);
+export const secondarySort = createSelector(charactersFeature, state => state.sort.selections[1] || undefined);
+export const sortedCharacters = createSelector(characters, primarySort, secondarySort, (unsorted, primary, secondary) => {
+  // duplicate - would ordinarily use some kind of deep copy (ramda, lodash) //
+  const sorted = [...unsorted];
+
+  // This is prime unit-test/refactor territory.  Seems to work. //
+  const twoTierSort = (primarySortSelection: SortSelection, secondarySortSelection: SortSelection) =>
+    (a, b) => {
+      // No Sorting To Be Done
+      if (!primarySortSelection) {
+        return 1;
+      }
+
+      const primarySortValue = sortCharacter(a, b, primarySortSelection);
+
+      return (primarySortValue === 0 && !!secondarySortSelection)
+        ? sortCharacter(a, b, secondarySortSelection)
+        : primarySortValue;
+    };
+
+  // ONLY HANDLING STRINGS //
+  const sortCharacter = (a: Character, b: Character, sort: SortSelection): number => {
+    if (a[sort.column] < b[sort.column]) {
+      return (sort.direction === 'ASC') ? -1 : 1;
+    } else if (a[sort.column] > b[sort.column]) {
+      return (sort.direction === 'ASC') ? 1 : -1;
+    } else {
+      return 0;
+    }
+  };
+
+  sorted.sort(twoTierSort(primary, secondary));
+
+  return sorted;
+});
