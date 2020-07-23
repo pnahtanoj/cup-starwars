@@ -10,33 +10,38 @@ export const sortedCharacters = createSelector(characters, primarySort, secondar
   // duplicate - would ordinarily use some kind of deep copy (ramda, lodash) //
   const sorted = [...unsorted];
 
-  // This is prime unit-test/refactor territory.  Seems to work. //
-  const twoTierSort = (primarySortSelection: SortSelection, secondarySortSelection: SortSelection) =>
-    (a, b) => {
-      // No Sorting To Be Done
-      if (!primarySortSelection) {
-        return 1;
-      }
-
-      const primarySortValue = sortCharacter(a, b, primarySortSelection);
-
-      return (primarySortValue === 0 && !!secondarySortSelection)
-        ? sortCharacter(a, b, secondarySortSelection)
-        : primarySortValue;
-    };
-
-  // ONLY HANDLING STRINGS //
-  const sortCharacter = (a: Character, b: Character, sort: SortSelection): number => {
-    if (a[sort.column] < b[sort.column]) {
-      return (sort.direction === 'ASC') ? -1 : 1;
-    } else if (a[sort.column] > b[sort.column]) {
-      return (sort.direction === 'ASC') ? 1 : -1;
-    } else {
-      return 0;
-    }
-  };
-
   sorted.sort(twoTierSort(primary, secondary));
 
   return sorted;
 });
+
+/*
+  HELPERS
+
+  This is prime unit-test/refactor territory.  Seems to work.
+  It could be made recursive to support n-depth, but I wouldn't head that far w/o unit testing
+*/
+const twoTierSort = (primarySortSelection: SortSelection, secondarySortSelection: SortSelection) =>
+  (a, b) => {
+    // No Sorting To Be Done
+    if (!primarySortSelection) {
+      return 1;
+    }
+
+    const primarySortValue = sortCharacter(a, b, primarySortSelection);
+
+    return (primarySortValue === 0 && !!secondarySortSelection)
+      ? sortCharacter(a, b, secondarySortSelection)
+      : primarySortValue;
+  };
+
+// ONLY HANDLING STRINGS //
+const sortCharacter = (a: Character, b: Character, sort: SortSelection): number => {
+  if (a[sort.column] < b[sort.column]) {
+    return (sort.direction === 'ASC') ? -1 : 1;
+  } else if (a[sort.column] > b[sort.column]) {
+    return (sort.direction === 'ASC') ? 1 : -1;
+  } else {
+    return 0;
+  }
+};
