@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { fetchCharacters, toggleSort, updateFilter } from '../../store/characters.reducer';
 import { Observable, Subscription } from 'rxjs';
 import { Character } from '../../model/Character';
-import { sortedCharacters, primarySort, secondarySort } from '../../store/characters.selectors';
+import { sortedCharacters, primarySort, secondarySort, characterFilter } from '../../store/characters.selectors';
 import { SortSelection } from '../sort-selection/SortSelection';
 import { tap, debounceTime } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -55,6 +55,15 @@ export class CharacterTableComponent implements OnInit, OnDestroy {
     this.characters$ = this.store.select(sortedCharacters);
     this.primarySortColumn$ = this.store.select(primarySort);
     this.secondarySortColumn$ = this.store.select(secondarySort);
+
+    // this is here to repopulate the filter from local storage //
+    this.sink.push(
+      this.store.select(characterFilter)
+        .pipe(
+          tap(filter => this.form.patchValue({ filter }))
+        )
+        .subscribe()
+    );
   }
 
   drop(event: CdkDragDrop<string[]>) {
