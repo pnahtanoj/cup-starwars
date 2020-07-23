@@ -4,6 +4,7 @@ import { SortSelection } from '../components/sort-selection/SortSelection';
 import { Character } from '../model/Character';
 
 export const characters = createSelector(charactersFeature, state => state.characters);
+export const characterFilter = createSelector(charactersFeature, state => state.filter);
 export const primarySort = createSelector(charactersFeature, state => state.sort.selections[0] || undefined);
 export const secondarySort = createSelector(charactersFeature, state => state.sort.selections[1] || undefined);
 export const sortedCharacters = createSelector(characters, primarySort, secondarySort, (unsorted, primary, secondary) => {

@@ -1,3 +1,10 @@
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-label>Name Filter</mat-label>
+    <input matInput formControlName="filter">
+  </mat-form-field>
+</form>
+
 <table mat-table cdkDropList cdkDropListOrientation="horizontal" [dataSource]="characters$ | async"
   [cdkDropListData]="displayedColumns" (cdkDropListDropped)='drop($event)'>
 

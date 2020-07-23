@@ -1,24 +1,28 @@
 // https://stackblitz.com/edit/angular-4secmm?file=src%2Fapp%2Fapp.component.ts
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Store } from '@ngrx/store';
-import { fetchCharacters, toggleSort } from '../../store/characters.reducer';
-import { Observable } from 'rxjs';
+import { fetchCharacters, toggleSort, updateFilter } from '../../store/characters.reducer';
+import { Observable, Subscription } from 'rxjs';
 import { Character } from '../../model/Character';
-import { characters, sortedCharacters, primarySort, secondarySort } from '../../store/characters.selectors';
+import { sortedCharacters, primarySort, secondarySort } from '../../store/characters.selectors';
 import { SortSelection } from '../sort-selection/SortSelection';
-import { tap } from 'rxjs/operators';
+import { tap, debounceTime } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-character-table',
   templateUrl: './character-table.component.html',
   styleUrls: ['./character-table.component.scss']
 })
-export class CharacterTableComponent implements OnInit {
+export class CharacterTableComponent implements OnInit, OnDestroy {
   characters$: Observable<Character[]>;
   primarySortColumn$: Observable<SortSelection>;
   secondarySortColumn$: Observable<SortSelection>;
+
+  form: FormGroup;
+  sink: Subscription[] = [];
 
   displayedColumns: string[] = ['name', 'birth_year', 'hair_color', 'mass'];
   // columnWidths: number[] = [50, 50, 50, 50];
@@ -29,7 +33,25 @@ export class CharacterTableComponent implements OnInit {
     this.store.dispatch(fetchCharacters());
   }
 
+  ngOnDestroy(): void {
+    this.sink.forEach(s => s.unsubscribe());
+  }
+
   ngOnInit(): void {
+    this.form = new FormGroup({
+      filter: new FormControl('')
+    });
+
+    this.sink.push(
+      this.form.get('filter')
+        .valueChanges
+        .pipe(
+          debounceTime(300),
+          tap(filter => this.store.dispatch(updateFilter({ filter })))
+        )
+        .subscribe()
+    );
+
     this.characters$ = this.store.select(sortedCharacters);
     this.primarySortColumn$ = this.store.select(primarySort);
     this.secondarySortColumn$ = this.store.select(secondarySort);
