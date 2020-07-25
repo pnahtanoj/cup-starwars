@@ -1,0 +1,60 @@
+$thColor: #dddddd;
+$tdColor: #eeeeee;
+$resizeHandleColor: #aaaaaa;
+$resizeHandleSize: 3px;
+$rowHeight: 1rem;
+
+.resizeTable {
+  width: 100%;
+  // border: 1px solid black;
+}
+
+.resizeThead,
+.resizeRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.resizeThead {
+  background-color: $thColor;
+}
+
+.resizeRow {
+  background-color: $tdColor;
+}
+
+.resizeTh,
+.resizeTd {
+  padding: 1rem;
+  // border: 1px solid red;
+}
+
+.resizeTh {
+  border-bottom: 1px solid $thColor;
+}
+
+
+.resizeHandle {
+  position: absolute;
+  height: 50px;
+  background-color: $resizeHandleColor;
+  width: $resizeHandleSize;
+  margin-left: -$resizeHandleSize;
+  cursor: col-resize;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .title {
+    flex: 1;
+  }
+
+  app-sort-selection {
+    padding-right: 1rem;
+  }
+}

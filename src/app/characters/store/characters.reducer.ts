@@ -3,6 +3,8 @@ import { CharactersResponse } from '../model/CharactersResponse';
 import { Character } from '../model/Character';
 import { MultiSortSelection, toggleSelections } from '../components/sort-selection/MultiSortSelection';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { ColumnDrop } from 'src/app/core/click-up-table/model/ColumnDrop';
+import { CutColumnData } from 'src/app/core/click-up-table/model/ColumnData';
 
 export const stateKey = 'characters';
 
@@ -31,18 +33,13 @@ export const updateTableWidth = createAction(
 );
 
 export const updateColumnWidth = createAction(
-  '[Table] Update Table Column Width',
-  props<{ index: number, width: number }>()
-);
-
-export const updateResizerLocation = createAction(
   '[Table] Update Resizer Location',
   props<{ index: number, deltax: number }>()
 );
 
 export const swapColumns = createAction(
   '[Table] Swap Table Columns',
-  props<{ previous: number, current: number }>()
+  props<{ drop: ColumnDrop }>()
 );
 
 
@@ -55,6 +52,7 @@ export interface State {
   columnValues: string[];
   columnWidths: number[];
   tableWidth: number;
+  tableColumns: CutColumnData[];
 }
 
 export const getInitialState = (): State => ({
@@ -67,9 +65,32 @@ export const getInitialState = (): State => ({
       { column: 'hair_color', direction: 'DESC' }
     ]
   },
+  tableColumns: [
+    {
+      property: 'name',
+      display: 'Name',
+      width: 0
+    },
+    {
+      property: 'birth_year',
+      display: 'Birth',
+      width: 0
+    },
+    {
+      property: 'hair_color',
+      display: 'Hair',
+      width: 0
+    },
+    {
+      property: 'eye_color',
+      display: 'Eye Color',
+      width: 0
+    }
+  ],
+
   // Table Data //
-  columnTitles: ['Name', 'Birth Year', 'Hair Color', 'Mass'],
-  columnValues: ['name', 'birth_year', 'hair_color', 'mass'],
+  columnTitles: ['Name', 'Birth Year', 'Hair Color', 'Eye Color'],
+  columnValues: ['name', 'birth_year', 'hair_color', 'eye_color'],
   columnWidths: [0, 0, 0, 0],
   tableWidth: 0
 });
@@ -91,21 +112,18 @@ export const reducer = createReducer(
   on(updateTableWidth, (state, { width }) => ({
     ...state,
     tableWidth: width,
-    columnWidths: resetWindowColumnsWidths(width, state.columnWidths)
+    tableColumns: resetWindowColumnsWidths(width, state.tableColumns),
+    columnWidths: resetWindowColumnsWidthsOld(width, state.columnWidths)
   })),
-  // on(updateColumnWidth, (state, { index, width }) => ({
-  //   ...state,
-  //   columnWidths: updateColumnWidths(state.columnWidths, index, width)
-  // })),
-  on(updateResizerLocation, (state, { index, deltax }) => ({
+  on(updateColumnWidth, (state, { index, deltax }) => ({
     ...state,
     columnWidths: updateResizers(state.tableWidth, state.columnWidths, index, deltax)
   })),
-  on(swapColumns, (state, { previous, current }) => {
+  on(swapColumns, (state, { drop }) => {
     const columnValues = [...state.columnValues];
-    moveItemInArray(columnValues, previous, current);
+    moveItemInArray(columnValues, drop.previous, drop.current);
     const columnWidths = [...state.columnWidths];
-    moveItemInArray(columnWidths, previous, current);
+    moveItemInArray(columnWidths, drop.previous, drop.current);
 
 
     return {
@@ -116,7 +134,14 @@ export const reducer = createReducer(
   })
 );
 
-const resetWindowColumnsWidths = (tableWidth: number, currentWidths: number[]): number[] => {
+const resetWindowColumnsWidths = (tableWidth: number, columns: CutColumnData[]): CutColumnData[] => {
+  return columns.map(w => ({
+    ...w,
+    width: tableWidth / 4
+  }));
+};
+
+const resetWindowColumnsWidthsOld = (tableWidth: number, currentWidths: number[]): number[] => {
   return currentWidths.map(w => tableWidth / 4);
 };
 
@@ -129,16 +154,12 @@ const resetWindowColumnsWidths = (tableWidth: number, currentWidths: number[]): 
 
 const updateResizers = (total: number, widths: number[], index: number, diff: number): number[] => {
   console.log(total, widths, index, diff);
-  // const percentageDiff = diff / totalWidth;
 
-  const leftWidth = widths[index] + diff;
-  const rightWidth = widths[index + 1] + (-1 * diff);
+  const leftWidth = Number(widths[index]) + diff;
+  const rightWidth = Number(widths[index + 1]) + (-1 * diff);
   const newWidths = [...widths];
   newWidths[index] = leftWidth;
   newWidths[index + 1] = rightWidth;
-
-  // console.log(percentageDiff, newWidths);
-
 
   return [...newWidths];
 };

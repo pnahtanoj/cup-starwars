@@ -1,28 +1,29 @@
 import { createSelector } from '@ngrx/store';
 import { charactersFeature } from './index';
-import { SortSelection } from '../components/sort-selection/SortSelection';
 import { Character } from '../model/Character';
+import { SortSelection } from '../../core/sort-selection/SortSelection';
 
 const MAGIC_NUMBER_RESIZER_WIDTH = 3;
 
 export const characters = createSelector(charactersFeature, state => state.characters);
 export const characterFilter = createSelector(charactersFeature, state => state.filter);
+export const multiSort = createSelector(charactersFeature, state => state.sort);
 export const primarySort = createSelector(charactersFeature, state => state.sort.selections[0] || undefined);
 export const secondarySort = createSelector(charactersFeature, state => state.sort.selections[1] || undefined);
+export const tableColumns = createSelector(charactersFeature, state => state.tableColumns);
 export const columnValues = createSelector(charactersFeature, state => state.columnValues);
+export const columnTitles = createSelector(charactersFeature, state => state.columnTitles);
 export const columnWidths = createSelector(charactersFeature, state => state.columnWidths);
-export const columnData = createSelector(columnValues, columnWidths, (values, widths) => values.map((value, i) => ({
-  value,
-  width: `${widths[i]}px`
-})));
-export const resizerData = createSelector(columnWidths, widths =>
-  widths
-    .slice(0, 3)
-    .map((width, i) => widths
-      .reduce((acc, item, j) => (j <= i) ? ((acc + item) - MAGIC_NUMBER_RESIZER_WIDTH) : acc, 0) // not very efficient
-    )
-    .map(width => `${width}px`)
-);
+export const columnData = createSelector(
+  columnTitles,
+  columnValues,
+  columnWidths,
+  (titles, values, widths) => values.map((value, i) => ({
+    value,
+    property: value,
+    display: titles[i],
+    width: widths[i]
+  })));
 
 export const sortedCharacters = createSelector(characters, primarySort, secondarySort, (unsorted, primary, secondary) => {
   // duplicate - would ordinarily use some kind of deep copy (ramda, lodash) //

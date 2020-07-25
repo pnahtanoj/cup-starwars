@@ -12,10 +12,11 @@ import * as fromCharacters from './store/characters.reducer';
 
 import { CharacterTableComponent } from './components/character-table/character-table.component';
 import { CharactersEffects } from './store/characters.effects';
-import { SortSelectionComponent } from './components/sort-selection/sort-selection.component';
+// import { SortSelectionComponent } from './components/sort-selection/sort-selection.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ResizeDirective } from '../resize.directive';
+import { CoreModule } from '../core/core.module';
 
 const routes: Routes = [
   {
@@ -27,7 +28,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     CharacterTableComponent,
-    SortSelectionComponent,
+    // SortSelectionComponent,
     ResizeDirective
   ],
   imports: [
@@ -37,6 +38,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     StoreModule.forFeature(fromCharacters.stateKey, fromCharacters.reducer),
     EffectsModule.forFeature([CharactersEffects]),
+    CoreModule,
     MatTableModule,
     MatIconModule,
     MatFormFieldModule,
