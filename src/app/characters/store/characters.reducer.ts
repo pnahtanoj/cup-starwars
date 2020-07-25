@@ -1,8 +1,8 @@
 import { createReducer, on, createAction, props } from '@ngrx/store';
 import { CharactersResponse } from '../model/CharactersResponse';
 import { Character } from '../model/Character';
-import { ColumnData } from '@/core/click-up-table/model/ColumnData';
-import { toggleSelections, MultiSortSelection } from '@/core/sort-selection/model/MultiSortSelection';
+import { ColumnData } from '@/core/components/click-up-table/model/ColumnData';
+import { toggleSelections, MultiSortSelection } from '@/core/components/sort-selection/model/MultiSortSelection';
 
 export const stateKey = 'characters';
 

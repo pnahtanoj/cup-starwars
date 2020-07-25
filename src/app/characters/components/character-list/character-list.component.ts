@@ -6,8 +6,8 @@ import { Character } from '../../model/Character';
 import { sortedCharacters, characterFilter, multiSort, tableColumns } from '../../store/characters.selectors';
 import { tap, debounceTime } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MultiSortSelection } from '@/core/sort-selection/model/MultiSortSelection';
-import { ColumnData } from '@/core/click-up-table/model/ColumnData';
+import { MultiSortSelection } from '@/core/components/sort-selection/model/MultiSortSelection';
+import { ColumnData } from '@/core/components/click-up-table/model/ColumnData';
 
 @Component({
   selector: 'app-character-list',

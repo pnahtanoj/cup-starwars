@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { charactersFeature } from './index';
 import { Character } from '../model/Character';
-import { SortSelection } from '@/core/sort-selection/model/SortSelection';
+import { SortSelection } from '@/core/components/sort-selection/model/SortSelection';
 
 export const characters = createSelector(charactersFeature, state => state.characters);
 export const characterFilter = createSelector(charactersFeature, state => state.filter);

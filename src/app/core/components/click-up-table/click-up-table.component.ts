@@ -3,7 +3,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { ColumnData } from './model/ColumnData';
-import { MultiSortSelection } from '@/core/sort-selection/model/MultiSortSelection';
+import { MultiSortSelection } from '@/core/components/sort-selection/model/MultiSortSelection';
 
 const MAGIC_NUMBER_RESIZER_WIDTH = 3;
 
