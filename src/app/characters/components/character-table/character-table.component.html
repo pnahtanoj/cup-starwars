@@ -5,29 +5,56 @@
   </mat-form-field>
 </form>
 
-<table mat-table cdkDropList cdkDropListOrientation="horizontal" [dataSource]="characters$ | async"
-  [cdkDropListData]="displayedColumns" (cdkDropListDropped)='drop($event)'>
+<div class='resizeContainer'>
+  <div *ngFor='let width of (resizerData$ | async); let i = index;' cdkDrag class='resizeHandle' cdkDragLockAxis="x"
+    (cdkDragMoved)='resizerMoving($event, i)' [style.margin-left]='width'></div>
+</div>
 
-  <ng-container [matColumnDef]="column" *ngFor='let column of displayedColumns'>
-    <th mat-header-cell *matHeaderCellDef cdkDrag (click)='sort(column)' width='w'>
+<!-- <table mat-table cdkDropList *ngIf='(columnData$ | async) as columns' cdkDropListOrientation="horizontal"
+  [dataSource]="characters$ | async" [cdkDropListData]="displayedColumns" (cdkDropListDropped)='drop($event)'>
+
+  <ng-container [matColumnDef]="column.value" *ngFor='let column of columns; let i = index'>
+    <th mat-header-cell *matHeaderCellDef cdkDrag (click)='sort(column.value)' [width]='column.width'>
       <div class='header'>
-        <span class='title'>{{column}}</span>
+        <span class='title'>{{column.value}}</span>
 
-        <app-sort-selection *ngIf='(primarySortColumn$ | async) as sort' [selection]='sort' [id]='column' [title]='1'>
+        <app-sort-selection *ngIf='(primarySortColumn$ | async) as sort' [selection]='sort' [id]='column.value'
+          [title]='1'>
         </app-sort-selection>
-        <app-sort-selection *ngIf='(secondarySortColumn$ | async) as sort' [selection]='sort' [id]='column' [title]='2'>
+        <app-sort-selection *ngIf='(secondarySortColumn$ | async) as sort' [selection]='sort' [id]='column.value'
+          [title]='2'>
         </app-sort-selection>
       </div>
-
-      <!-- <div class='header-items'>
-        <div class='title'>No.</div>
-        <div class='resizer' cdkDrag cdkDragData="resizer"></div>
-      </div> -->
     </th>
 
-    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+    <td mat-cell *matCellDef="let element" [width]='column.width'> {{element[column.value]}} </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+ -->
+
+<div class='resizeTable' cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)='drop($event)'>
+  <div class='resizeThead'>
+    <div class='resizeTh' *ngFor='let column of (columnData$ | async); let i = index' cdkDrag
+      (click)='sort(column.value)' [style.width]='column.width'>
+      <div class='header'>
+        <span class='title'>{{column.value}}</span>
+
+        <app-sort-selection *ngIf='(primarySortColumn$ | async) as sort' [selection]='sort' [id]='column.value'
+          [title]='1'>
+        </app-sort-selection>
+        <app-sort-selection *ngIf='(secondarySortColumn$ | async) as sort' [selection]='sort' [id]='column.value'
+          [title]='2'>
+        </app-sort-selection>
+      </div>
+    </div>
+  </div>
+
+  <div class='resizeRow' *ngFor='let character of (characters$ | async)'>
+    <div class='resizeTd' *ngFor='let column of (columnData$ | async); let i = index' [style.width]='column.width'>
+      {{character[column.value]}}
+    </div>
+  </div>
+</div>

@@ -15,6 +15,7 @@ import { CharactersEffects } from './store/characters.effects';
 import { SortSelectionComponent } from './components/sort-selection/sort-selection.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ResizeDirective } from '../resize.directive';
 
 const routes: Routes = [
   {
@@ -26,7 +27,8 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     CharacterTableComponent,
-    SortSelectionComponent
+    SortSelectionComponent,
+    ResizeDirective
   ],
   imports: [
     CommonModule,
