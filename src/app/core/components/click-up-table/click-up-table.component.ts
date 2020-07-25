@@ -40,7 +40,6 @@ export class ClickUpTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes) {
-    // console.log(changes);
     if (changes.columns && changes.columns.currentValue) {
       const columns = changes.columns.currentValue;
       const widths = columns.map(c => c.width);
@@ -54,11 +53,9 @@ export class ClickUpTableComponent implements OnInit, OnChanges, OnDestroy {
       this.resizerWidthsPx = columns
         .slice(0, 3)
         .map((width, i) => widths
-          .reduce((acc, item, j) => (j <= i) ? ((acc + item) - MAGIC_NUMBER_RESIZER_WIDTH) : acc, 0) // not very efficient
+          .reduce((acc, item, j) => (j <= i) ? ((acc + item) - MAGIC_NUMBER_RESIZER_WIDTH) : acc, 0) // not legible or efficient
         )
         .map(width => `${width}px`);
-
-      // console.log(this.resizerWidthsPx);
     }
   }
 
@@ -73,7 +70,7 @@ export class ClickUpTableComponent implements OnInit, OnChanges, OnDestroy {
   drop(event: CdkDragDrop<string[]>) {
     const columns = this.columns.map(c => ({ ...c }));
     moveItemInArray(columns, event.previousIndex, event.currentIndex);
-    // console.log(columns);
+
     this.updateColumns.emit(columns);
   }
 

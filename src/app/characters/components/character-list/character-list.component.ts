@@ -18,6 +18,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   characters$: Observable<Character[]>;
   sort$: Observable<MultiSortSelection>;
   tableColumns$: Observable<ColumnData[]>;
+
   form: FormGroup;
   sink: Subscription[] = [];
 

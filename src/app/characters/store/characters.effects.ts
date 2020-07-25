@@ -16,7 +16,7 @@ export class CharactersEffects {
       .pipe(
         map(response => fromCharacters.loadCharacters({ response })),
         catchError(() => {
-          return EMPTY;
+          return EMPTY; // NOT WHAT YOU'D DO IRL
         })
       )
     )

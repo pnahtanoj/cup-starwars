@@ -95,6 +95,7 @@ export const reducer = createReducer(
   })),
 );
 
+// BOO
 const resetWindowColumnsWidths = (tableWidth: number, columns: ColumnData[]): ColumnData[] => {
   return columns.map(w => ({
     ...w,

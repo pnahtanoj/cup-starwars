@@ -22,7 +22,7 @@ export const sortedCharacters = createSelector(characters, primarySort, secondar
   HELPERS
 
   This is prime unit-test/refactor territory.  Seems to work.
-  It could be made recursive to support n-depth, but I wouldn't head that far w/o unit testing
+  It could be made recursive to support n-depth, but I wouldn't head that far w/o unit testing to aid in refactoring
 */
 const twoTierSort = (primarySortSelection: SortSelection, secondarySortSelection: SortSelection) =>
   (a, b) => {
