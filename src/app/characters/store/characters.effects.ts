@@ -1,5 +1,5 @@
-import { EMPTY, of } from 'rxjs';
-import { map, mergeMap, catchError, tap, withLatestFrom } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { map, mergeMap, catchError, withLatestFrom } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Actions, createEffect, ofType } from '@ngrx/effects';

@@ -6,5 +6,5 @@
 </form>
 
 <app-click-up-table [items]='characters$ | async' [columns]='tableColumns$ | async' [sort]='sort$ | async'
-  (dropColumn)='dropColumn($event)' (toggleSort)='sort($event)'>
+  (updateColumns)='updateColumns($event)' (toggleSort)='sort($event)'>
 </app-click-up-table>

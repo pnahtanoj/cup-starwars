@@ -1,12 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CutColumnData } from './model/ColumnData';
-import { MultiSortSelection } from '../sort-selection/MultiSortSelection';
-import { ColumnDrop } from './model/ColumnDrop';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
-import { updateColumnWidth } from 'src/app/characters/store/characters.reducer';
-import { tableColumns } from 'src/app/characters/store/characters.selectors';
+import { ColumnData } from './model/ColumnData';
+import { MultiSortSelection } from '@/core/sort-selection/model/MultiSortSelection';
 
 const MAGIC_NUMBER_RESIZER_WIDTH = 3;
 
@@ -17,13 +14,14 @@ const MAGIC_NUMBER_RESIZER_WIDTH = 3;
 })
 export class ClickUpTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() items: any[];
-  @Input() columns: CutColumnData[];
+  @Input() columns: ColumnData[];
   @Input() sort: MultiSortSelection;
 
-  @Output() dropColumn = new EventEmitter<ColumnDrop>();
+  @Output() updateColumns = new EventEmitter<ColumnData[]>();
   @Output() toggleSort = new EventEmitter<string>();
 
-  resizerWidths: string[];
+  columnsPx: ColumnData[];
+  resizerWidthsPx: string[];
   resizeData$: Subject<{ event: any, i: number }> = new Subject();
   sink: Subscription[] = [];
 
@@ -35,32 +33,32 @@ export class ClickUpTableComponent implements OnInit, OnChanges, OnDestroy {
         .pipe(
           debounceTime(50),
           tap(console.log),
-          // tap(data => this.store.dispatch(updateColumnWidth({ index: data.i, deltax: data.event.distance.x })))
+          tap(data => this.updateColumnSize(data.i, data.event.distance.x))
         )
         .subscribe()
     );
   }
 
   ngOnChanges(changes) {
-    console.log(changes);
+    // console.log(changes);
     if (changes.columns && changes.columns.currentValue) {
       const columns = changes.columns.currentValue;
       const widths = columns.map(c => c.width);
       console.log(columns);
 
-      this.columns = this.columns.map(c => ({
+      this.columnsPx = this.columns.map(c => ({
         ...c,
         width: `${c.width}px`
       }));
 
-      this.resizerWidths = columns
+      this.resizerWidthsPx = columns
         .slice(0, 3)
         .map((width, i) => widths
           .reduce((acc, item, j) => (j <= i) ? ((acc + item) - MAGIC_NUMBER_RESIZER_WIDTH) : acc, 0) // not very efficient
         )
         .map(width => `${width}px`);
 
-      console.log(this.resizerWidths);
+      // console.log(this.resizerWidthsPx);
     }
   }
 
@@ -73,14 +71,21 @@ export class ClickUpTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    const columns = [...this.columns]
+    const columns = this.columns.map(c => ({ ...c }));
     moveItemInArray(columns, event.previousIndex, event.currentIndex);
+    // console.log(columns);
+    this.updateColumns.emit(columns);
+  }
 
-    // const columnWidths = [...state.columnWidths];
-    // moveItemInArray(columnWidths, drop.previous, drop.current);
+  updateColumnSize(index: number, deltax: number) {
+    const leftWidth = Number(this.columns[index].width) + deltax;
+    const rightWidth = Number(this.columns[index + 1].width) + (-1 * deltax);
+    const columns = this.columns.map(c => ({ ...c }));
 
+    columns[index].width = leftWidth;
+    columns[index + 1].width = rightWidth;
 
-    // this.dropColumn.emit({ previous: event.previousIndex, current: event.currentIndex });
+    this.updateColumns.emit(columns);
   }
 
   resizerMoving(event: any, i: number) {

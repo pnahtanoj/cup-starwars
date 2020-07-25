@@ -1,14 +1,14 @@
 <div class='resizeContainer'>
-  <div *ngFor='let width of resizerWidths; let i = index;' cdkDrag class='resizeHandle' cdkDragLockAxis="x"
+  <div *ngFor='let width of resizerWidthsPx; let i = index;' cdkDrag class='resizeHandle' cdkDragLockAxis="x"
     (cdkDragMoved)='resizerMoving($event, i)' [style.margin-left]='width'></div>
 </div>
 
 <div class='resizeTable' cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)='drop($event)'>
   <div class='resizeThead'>
-    <div class='resizeTh' *ngFor='let column of columns; let i = index' cdkDrag
+    <div class='resizeTh' *ngFor='let column of columnsPx; let i = index' cdkDrag
       (click)='toggleSortColumn(column.property)' [style.width]='column.width'>
       <div class='header'>
-        <span class='title'>{{column.property}}</span>
+        <span class='title'>{{column.display}}</span>
 
         <app-sort-selection [sort]='sort' [id]='column.property'></app-sort-selection>
       </div>
@@ -16,7 +16,7 @@
   </div>
 
   <div class='resizeRow' *ngFor='let item of items'>
-    <div class='resizeTd' *ngFor='let column of columns; let i = index' [style.width]='column.width'>
+    <div class='resizeTd' *ngFor='let column of columnsPx; let i = index' [style.width]='column.width'>
       {{item[column.property]}}
     </div>
   </div>

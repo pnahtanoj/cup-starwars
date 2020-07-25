@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { SortDirection } from './SortSelection';
-import { MultiSortSelection } from './MultiSortSelection';
+import { SortDirection } from './model/SortSelection';
+import { MultiSortSelection } from './model/MultiSortSelection';
 
 @Component({
   selector: 'app-sort-selection',
